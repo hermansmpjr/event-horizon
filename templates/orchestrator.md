@@ -28,7 +28,30 @@ Coordinate work between specialist agents, manage workflow state, and ensure gov
 - Performing deep specialist work (should delegate to specialist agents)
 - Making final business decisions outside of defined governance rules
 
+## Orchestrator Type
+
+- [ ] **Fleet Governor** — Meta layer; strategic oversight, promotion authority, long-horizon work
+- [ ] **Runtime Orchestrator** — Production layer; day-to-day work routing
+- [ ] **Intake Agent** — User-facing; submits upward to governor only (see [intake-handoff.md](intake-handoff.md))
+
 ## Routing & Decision Logic
+
+**Governor routing table (if applicable):**
+
+| Work type | Target |
+|-----------|--------|
+| New agent / major change | [Agent Factory] |
+| Knowledge discovery | [Discovery agent] |
+| Knowledge design | [Mapper agent] |
+| Documentation / skill authoring | [Fleet Documenter] |
+| Vague business request | [Intake agent] (user-invoked) |
+| Strategic / governance / long-horizon | Self (Governor) |
+
+**Long-horizon retention criteria (Governor only):**
+- Fleet policy and standards evolution
+- Cross-agent trade-off decisions
+- Promotion and registry gate decisions
+- Multi-project strategic planning
 
 **Routing Principles:**
 - [How does this orchestrator decide which agent to use?]
@@ -37,6 +60,7 @@ Coordinate work between specialist agents, manage workflow state, and ensure gov
 **Decision Criteria:**
 - [Criteria used to choose between agents or paths]
 - [How it handles ambiguity or missing information]
+- Verify peer vs parent-child relationships in live runtime, not exports alone
 
 ## State Management
 

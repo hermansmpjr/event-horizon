@@ -56,9 +56,13 @@ flowchart TD
 
 ## Files in This Example
 
-- `architecture.md` — Detailed workflow diagram and explanation
-- `agents/` — Agent definitions using the standard templates
-- `handoff-contracts/` — Contracts defining inputs/outputs between agents
+| File | Status |
+|------|--------|
+| [architecture.md](architecture.md) | Stub — topology and layer placement |
+| [agents/research-orchestrator.md](agents/research-orchestrator.md) | Stub — expand using orchestrator template |
+| [handoff-contracts/web-to-synthesis.md](handoff-contracts/web-to-synthesis.md) | Stub — expand using handoff template |
+
+Additional agent definitions and contracts are planned. Stubs are provided so links resolve; expand before using in production.
 
 ## How to Use This Example
 

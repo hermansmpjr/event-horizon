@@ -52,7 +52,31 @@ The Production Layer contains agents that have been evaluated and approved for o
 
 Promotion from the Development Layer to Production should follow defined evaluation gates.
 
+## Repository Layer Mapping
+
+Event-Horizon's three architectural layers map to separate repositories in mature deployments:
+
+| Layer | Repository role | Contents |
+|-------|-----------------|----------|
+| **Meta** | Governance control plane | Governor, agent factory, standards, eval rubrics |
+| **Development** | Staging / sandbox | Experimental agents, skills, routing drafts |
+| **Production** | Live runtime catalog | Approved agents, handoff contracts, automation docs |
+
+Promotion flows Meta → Development → Production. For an implementable fleet OS with schemas and role archetypes, see [agent-fleet-os](https://github.com/hermansmpjr/agent-fleet-os).
+
 ## Key Architectural Concepts
+
+### Orchestrator Variants
+
+Not all orchestrators serve the same purpose. Distinguish between:
+
+| Variant | Layer | Role |
+|---------|-------|------|
+| **Fleet Governor** | Meta | Strategic oversight, promotion authority, long-horizon fleet evolution |
+| **Runtime Orchestrator** | Production | Day-to-day work routing, RFQ/workflow coordination |
+| **Intake Agent** | Meta or Dev | User-facing, low-authority; converts plain requests into upward handoff packets |
+
+**Peer agents** sit at the same level under a governor (e.g., architect, runtime orchestrator, discovery, documenter). Do not assume parent-child chains from configuration exports alone — verify in the live runtime graph.
 
 ### Orchestrator Pattern
 
@@ -64,15 +88,45 @@ A central orchestrator agent is responsible for:
 
 Specialist agents focus on narrow, well-defined responsibilities.
 
+### Skills vs Connected Children
+
+Platform exports often list "child agents" that are actually **internal skill topics** attached to a parent agent, not separate connected agents in the runtime graph.
+
+**Rule:** Before documenting parent-child relationships, verify against the live runtime component graph. Mark any relationship inferred from exports only as **Needs validation**.
+
+Internal skills return structured result blocks (e.g., `ChildResult` with status, confidence, and export-safety flags) that the parent integrates — they do not communicate with end users directly.
+
+### Intake Pattern
+
+A user-facing intake agent:
+- Accepts plain-language requests from users
+- Produces a single structured handoff packet
+- Submits **upward to the fleet governor only** — never bypasses governance by calling factory, discovery, or other meta agents directly
+- Blocks packet emission if a self-test checklist fails
+
+See [templates/intake-handoff.md](templates/intake-handoff.md).
+
 ### Handoff Contracts
 
-Clear contracts between agents are essential. Each handoff should define:
-- Input requirements
-- Expected output format
-- Success criteria
-- Responsibility boundaries
+Clear contracts between agents are essential. Each handoff packet must include:
 
-This reduces ambiguity and improves debuggability.
+| Field | Required |
+|-------|----------|
+| `SelectedAgent` | Yes |
+| `Confidence` | Yes |
+| `Reason` | Yes |
+| `RequiredInputsMissing` | Yes (empty list OK, never omit) |
+| `InputsReceived` | Yes |
+| `ExecutionConstraints` | Yes |
+| `RequestedDeliverable` | Yes |
+| `PayloadForChildAgent` | Yes |
+| `ExpectedReturnContract` | Yes |
+| `SuggestedNextRoute` | Optional |
+| `Mode` | Optional (fast / deep / export / debug / selftest) |
+
+**Routing rules:** Parent owns final synthesis. Children do not address end users. One child per request unless phased work is explicitly requested.
+
+See [templates/handoff-contract.md](templates/handoff-contract.md).
 
 ### Evidence-Based Approach
 
@@ -90,6 +144,27 @@ Different tasks may benefit from different models. The architecture supports rou
 - Required reasoning depth
 - Cost and latency considerations
 - Governance requirements
+
+## Verified Topology Pattern
+
+In mature fleets, the live runtime graph (not export YAML) is the source of truth for agent relationships:
+
+```mermaid
+flowchart TD
+    Governor[FleetGovernor]
+    Governor --> Architect[DevArchitect]
+    Governor --> RuntimeOrch[RuntimeOrchestrator]
+    Governor --> Discovery[KnowledgeDiscovery]
+    Governor --> Documenter[FleetDocumenter]
+    Governor --> Factory[AgentFactory]
+    Governor --> Intake[IntakeAgent]
+
+    Intake -->|"upward only"| Governor
+    Governor --> Factory
+    Governor --> Discovery
+```
+
+Peers under the governor coordinate through structured handoff packets. Internal skills within a runtime orchestrator are not separate nodes in this graph.
 
 ## Visual Architecture
 

@@ -16,15 +16,39 @@ Use this template to define clear expectations when work moves between agents.
 **Why does this handoff exist?**  
 [Brief description of the reason for this connection between agents]
 
+## Handoff Packet Fields
+
+All routing handoffs must include these fields:
+
+| Field | Required | Format | Description |
+|-------|----------|--------|-------------|
+| `SelectedAgent` | Yes | string | Target child agent or role |
+| `Confidence` | Yes | High / Medium / Low | Routing confidence |
+| `Reason` | Yes | string | Why this routing was chosen |
+| `RequiredInputsMissing` | Yes | list | Gaps that block work (empty list OK, never omit) |
+| `InputsReceived` | Yes | object | What was provided |
+| `ExecutionConstraints` | Yes | string | No guessing; preserve source discipline |
+| `RequestedDeliverable` | Yes | string | Expected artifact |
+| `PayloadForChildAgent` | Yes | object | Structured input data |
+| `ExpectedReturnContract` | Yes | string | What must come back |
+| `SuggestedNextRoute` | No | string | Optional downstream routing |
+| `Mode` | No | enum | fast / deep / export / debug / selftest |
+
+## Routing Rules
+
+- Parent owns final synthesis
+- Children do not address end users
+- Only authorized export paths produce customer-facing output
+- One child per request unless phased work is explicitly requested
+- Tool/MCP evidence must be source-classified before recommendations
+
 ## Input Requirements
 
-**What the receiving agent expects to receive:**
+**Additional context beyond the packet:**
 
-| Field                  | Required | Format / Type          | Description                                      |
-|------------------------|----------|------------------------|--------------------------------------------------|
-| [Field 1]              | Yes/No   | [e.g. string, JSON]    | [What this field contains]                       |
-| [Field 2]              | Yes/No   | [e.g. string, JSON]    | [What this field contains]                       |
-| [Field 3]              | Yes/No   | [e.g. string, JSON]    | [What this field contains]                       |
+| Field | Required | Format / Type | Description |
+|-------|----------|---------------|-------------|
+| [Field 1] | Yes/No | [e.g. string, JSON] | [What this field contains] |
 
 **Minimum Required Context:**
 - [What context or previous outputs must be included]

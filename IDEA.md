@@ -65,14 +65,18 @@ This phase takes place mainly in the **Development Layer**.
 - Review agent outputs for accuracy, consistency, and compliance
 - Test edge cases and failure modes
 - Evaluate against defined criteria (quality, cost, latency, governance)
+- Apply governance-adjusted scoring — correct abstention is a pass, not a failure
+- Re-adjudicate platform eval results using case classes A–D (see [docs/governance.md](docs/governance.md))
+- Verify fleet topology in live runtime before documenting relationships
 - Decide whether to iterate, redesign, or promote
 
 **Output Examples:**
 - Evaluation reports or summaries
-- Go / No-Go decisions
+- Go / No-Go decisions (fleet governor authority)
 - Improvement recommendations
+- Updated agent registry entries
 
-Evaluation happens primarily in the **Development Layer**, with oversight from the **Meta Layer**.
+Evaluation happens primarily in the **Development Layer**, with oversight from the **Meta Layer** (fleet governor).
 
 ### 4. Automate
 

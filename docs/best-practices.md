@@ -7,9 +7,9 @@ This document captures key best practices for building and governing multi-agent
 One of the most common sources of problems in multi-agent systems is unclear responsibility.
 
 **Best Practice:**
-- Define explicit boundaries for every agent using the [Agent Definition Template](templates/agent.md).
+- Define explicit boundaries for every agent using the [Agent Definition Template](../templates/agent.md).
 - Clearly document what an agent **should** and **should not** do.
-- Use [Handoff Contracts](templates/handoff-contract.md) to make expectations between agents explicit.
+- Use [Handoff Contracts](../templates/handoff-contract.md) to make expectations between agents explicit.
 
 ## 2. Use the Orchestrator Pattern Intentionally
 
@@ -17,6 +17,7 @@ Not every workflow needs a complex orchestrator, but when coordination is requir
 
 **Best Practice:**
 - Use a dedicated orchestrator when work needs to be broken down, routed, or sequenced across multiple agents.
+- Distinguish fleet governors (strategic/meta) from runtime orchestrators (operational).
 - Keep orchestrators focused on **coordination**, not deep specialist work.
 - Define clear routing logic and escalation rules.
 
@@ -25,16 +26,18 @@ Not every workflow needs a complex orchestrator, but when coordination is requir
 Implicit handoffs are a major source of bugs and inconsistent behavior.
 
 **Best Practice:**
-- Always define handoff contracts between agents.
+- Always define handoff contracts between agents with all required packet fields.
 - Specify required inputs, expected outputs, and success criteria.
 - Treat handoffs as first-class design artifacts.
+- Intake agents submit upward to the governor only — never bypass governance.
 
 ## 4. Evaluate Before You Automate
 
 Moving agents into production too early is risky.
 
 **Best Practice:**
-- Use structured evaluation (see [Evaluation Criteria Template](templates/evaluation-criteria.md)) before promoting agents.
+- Use structured evaluation (see [Evaluation Criteria Template](../templates/evaluation-criteria.md)) before promoting agents.
+- Apply governance-adjusted scoring — correct abstention is a pass, not a failure.
 - Define clear quality, governance, and performance criteria.
 - Only promote agents that meet defined thresholds.
 
@@ -44,6 +47,7 @@ Mixing experimental work with production systems creates instability.
 
 **Best Practice:**
 - Keep experimental or high-risk work in the **Development Layer**.
+- Use separate repositories for meta, staging, and production layers.
 - Only move agents to the **Production Layer** after they have been properly evaluated.
 - Use the **Meta Layer** to manage standards and patterns, not to run experimental agents.
 
@@ -54,6 +58,7 @@ You cannot govern what you cannot see.
 **Best Practice:**
 - Ensure agents produce traceable outputs (reasoning, sources, decisions).
 - Log important handoffs and decisions.
+- Maintain an [Agent Registry](../templates/agent-registry.md) with verified topology and bot IDs.
 - Make it possible to reconstruct why an agent made a particular decision.
 
 ## 7. Iterate Using the IDEA Cycle
@@ -72,17 +77,29 @@ Overly broad agents tend to be less reliable and harder to govern.
 **Best Practice:**
 - Prefer narrower, well-scoped specialist agents over large generalist ones.
 - Use orchestrators to coordinate multiple focused agents rather than making one agent do everything.
+- Colocate skills with their owning agent — avoid repo-wide skill directories.
 
-## 9. Document Decisions
+## 9. Verify Topology in Live Runtime
+
+Configuration exports can misrepresent agent relationships.
+
+**Best Practice:**
+- Ground fleet topology in the live runtime component graph.
+- Distinguish connected children from internal skill topics.
+- Mark unverified relationships as **Needs validation**.
+- Re-verify after platform exports or agent promotions.
+
+## 10. Document Decisions
 
 Future you (and others) will thank you.
 
 **Best Practice:**
 - Document why agents were designed a certain way.
+- Stamp artifacts with `documentationId` values.
 - Record evaluation results and promotion decisions.
-- Maintain living documentation alongside your agents.
+- Maintain living documentation alongside your agents per [agent-structure.md](agent-structure.md).
 
-## 10. Balance Rigor with Pragmatism
+## 11. Balance Rigor with Pragmatism
 
 Governance and structure are important, but over-engineering can slow you down.
 
